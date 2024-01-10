@@ -1,0 +1,59 @@
+databaseChangeLog:
+- changeSet:
+   id: 0001
+   author: jclarino    
+   changes:    
+   - loadData:
+      columns:
+      - column:    
+         header: id    
+         name: id    
+         type: UUID  
+      - column:    
+         header: name    
+         name: name    
+         type: TEXT                       
+      catalogName: categories                
+      commentLineStartsWith:  //    
+      encoding: UTF-8    
+      file:  ../assets/0001-categories.csv    
+      quotchar:  ''''
+      relativeToChangelogFile:  true
+      separator: ','
+      tableName: categories    
+      usePreparedStatements:  true
+   - loadData:
+      columns:
+      - column:    
+         header: id    
+         name: id    
+         type: UUID 
+      - column:    
+         header: category_id
+         name: category_id    
+         type: UUID        
+      - column:
+         header: type
+         name: type
+         type: OTHER
+      - column:    
+         header: description    
+         name: description    
+         type: TEXT                             
+      - column:    
+         header: amount    
+         name: amount    
+         type: NUMERIC                           
+      - column:    
+         header: date    
+         name: date
+         type: DATE
+      catalogName: entries               
+      commentLineStartsWith:  //    
+      encoding: UTF-8    
+      file:  ../assets/0002-entries.csv    
+      quotchar:  ''''
+      relativeToChangelogFile:  true
+      separator: ','
+      tableName: entries
+      usePreparedStatements:  true      

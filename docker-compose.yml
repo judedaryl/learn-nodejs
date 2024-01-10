@@ -1,0 +1,74 @@
+version: "2.1"
+
+networks:
+  tracker:
+    name: tracker
+    driver: bridge
+
+services:
+  db:
+    image: postgres:12
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: tracker
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: s0mes3cret
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tracker
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    container_name: swagger_ui_container
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./docs:/usr/share/nginx/html/docs
+    environment:
+      API_URL: docs/api.yml
+  liquibase:
+    image: liquibase/liquibase:latest
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./database:/db:ro
+    working_dir: /db
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_DB: tracker
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: s0mes3cret
+    entrypoint: ""
+    command: ./migrate-and-seed.sh
+    healthcheck:
+      test: "exit 0"
+    networks:
+      - tracker
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: expense-tracker:latest
+    depends_on:
+      db:
+        condition: service_healthy    
+    restart: always
+    environment:
+      PORT: 8101
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: tracker
+      DB_USERNAME: postgres
+      DB_PASSWORD: s0mes3cret    
+      ENV: DEV  
+    ports:
+      - "8101:8101"
+    networks:
+      - tracker

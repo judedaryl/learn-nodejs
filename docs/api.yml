@@ -1,0 +1,318 @@
+openapi: 3.0.3
+info:
+  title: Tracker
+  description: |-
+    This is the full api-spec of the Tracker API that must be implemented.
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: daryl@compassmining.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: http://localhost:8101
+tags:
+  - name: categories
+    description: The categories of an expense or income
+  - name: incomes
+    description: Income information
+  - name: expenses
+    description: Expense information
+paths:
+  /categories:
+    get:
+      tags:
+        - categories
+      summary: List all available categories
+      responses:
+        '200':
+          description: Array of categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+    post:
+      tags:
+        - categories
+      summary: Create a category
+      requestBody:
+        description: Create a category
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Entertainment
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+  /categories/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: Category Id
+        required: true  
+    get:
+      tags:
+        - categories
+      summary: Get category by id     
+      responses:
+        '200':
+          description: Array
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+    put:
+      tags:
+        - categories
+      summary: Update category by id
+      requestBody:
+        description: Update
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Entertainment
+      responses:
+        '204':
+          description: Success   
+    delete:
+      tags:
+        - categories
+      summary: Delete category by id
+      responses:
+        '204':
+          description: Success
+  /incomes:
+    get:
+      tags:
+        - incomes
+      summary: List all available incomes
+      responses:
+        '200':
+          description: Array of incomes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IncomeResponse'
+    post:
+      tags:
+        - incomes
+      summary: Create a income entry
+      requestBody:
+        description: Create a income entry
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateIncomeDto'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IncomeResponse'    
+  /incomes/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: Income Entry Id
+        required: true  
+    get:
+      tags:
+        - incomes
+      summary: Get income by id     
+      responses:
+        '200':
+          description: Array
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IncomeResponse'
+    put:
+      tags:
+        - incomes
+      summary: Update income by id
+      requestBody:
+        description: Update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateIncomeDto'
+      responses:
+        '204':
+          description: Success   
+    delete:
+      tags:
+        - incomes
+      summary: Delete income by id
+      responses:
+        '204':
+          description: Success  
+  /expenses:
+    get:
+      tags:
+        - expenses
+      summary: List all available expenses
+      responses:
+        '200':
+          description: Array of expenses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExpenseResponse'
+    post:
+      tags:
+        - expenses
+      summary: Create a expense entry
+      requestBody:
+        description: Create a expense entry
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateExpenseDto'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IncomeResponse'    
+  /expenses/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: Expense Entry Id
+        required: true  
+    get:
+      tags:
+        - expenses
+      summary: Get expense by id     
+      responses:
+        '200':
+          description: Array
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IncomeResponse'
+    put:
+      tags:
+        - expenses
+      summary: Update expense by id
+      requestBody:
+        description: Update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateIncomeDto'
+      responses:
+        '204':
+          description: Success   
+    delete:
+      tags:
+        - expenses
+      summary: Delete expense by id
+      responses:
+        '204':
+          description: Success          
+components:
+  schemas:
+    Entity:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d4b039db-614e-4f92-b662-8e35663df092
+    Category:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          properties:
+            name:
+              type: string
+              example: Entertainment
+    EntryCommon:
+      type: object
+      properties:
+        description:
+          type: string
+        amount:
+          type: number
+        date:
+          type: string
+          format: date     
+    WithCategoryId:
+      type: object
+      properties:
+        categoryId:
+          type: string
+          format: uuid        
+    Entry:
+      allOf:
+        - $ref: '#/components/schemas/EntryCommon'
+        - type: object
+          properties:
+            category:
+              allOf:
+                - $ref: '#/components/schemas/Category'
+            description:
+              type: string
+            amount:
+              type: number
+            date:
+              type: string
+              format: date 
+    ExpenseResponse:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - $ref: '#/components/schemas/Entry'
+    IncomeResponse:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - $ref: '#/components/schemas/Entry'
+    CreateExpenseDto:
+      allOf:
+        - $ref: '#/components/schemas/WithCategoryId'
+        - $ref: '#/components/schemas/EntryCommon'
+    CreateIncomeDto:
+      allOf:
+        - $ref: '#/components/schemas/WithCategoryId'
+        - $ref: '#/components/schemas/EntryCommon'  
+    UpdateExpenseDto:
+      allOf:
+        - $ref: '#/components/schemas/WithCategoryId'
+        - $ref: '#/components/schemas/EntryCommon'
+    UpdateIncomeDto:
+      allOf:
+        - $ref: '#/components/schemas/WithCategoryId'
+        - $ref: '#/components/schemas/EntryCommon'         

@@ -1,0 +1,4 @@
+id,category_id,type,description,amount,date
+f5eb9a64-614a-4b8b-bece-bb9fbf229406,5d3c073f-7a96-48d1-b0a6-9e875772327b,expense,Groceries,500,2024-01-10T00:00:00
+b4b641fe-f0cc-492f-9198-daea4a76deb2,5d3c073f-7a96-48d1-b0a6-9e875772327b,expense,Home improvement,2300,2024-01-10T00:00:00
+821b7c0e-5932-46ed-a01f-3ed937210670,a27631bd-6f50-4a45-89f9-8b32ec17b0ef,income,My Company,50000,2024-01-10T00:00:00
