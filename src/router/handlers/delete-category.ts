@@ -11,5 +11,5 @@ export default async function (req: Request, res: Response) {
     await db.query(`
         DELETE FROM categories WHERE id = $1;
     `, [id])
-    res.status(204);
+    res.status(204).send();
 }
