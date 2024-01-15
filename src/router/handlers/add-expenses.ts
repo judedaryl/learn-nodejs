@@ -12,13 +12,14 @@ const schema = object({
 export default async function(req: Request, res: Response) {
     const dto = await schema.validate(req.body)
     const query = await db.query(`
-        INSERT INTO expenses (
+        INSERT INTO entries (
             category_id,
             description,
             amount,
+            type,
             date
         )
-        VALUES($1, $2, $3, $4)
+        VALUES($1, $2, $3, 'expense', $4)
         RETURNING id;
     `, [dto.categoryId, dto.description, dto.amount, dto.date.toISOString()])
     res.status(201).json(query.rows[0])
