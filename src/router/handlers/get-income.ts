@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
 import db from '../../db';
-import { Expense } from '../../models/expense';
+import { Income } from '../../models/income';
 
-export default async function(_: Request, res: Response) {
-    try {
-        const query = await db.query<Expense>(`
+
+export default async function (_: Request, res: Response) {
+    try{
+        const query = await db.query<Income>(`
         SELECT e.id, 
             e.description,
             e.amount,
@@ -13,9 +14,9 @@ export default async function(_: Request, res: Response) {
             c.name category_name 
         FROM entries e 
         LEFT JOIN categories c ON c.id = e.category_id 
-        WHERE e.type = $1`, ['expense']);
+        WHERE e.type = $1`, ['income']);
 
-        const responseData = query.rows.map((entry: Expense) => ({
+        const responseData = query.rows.map((entry: Income) => ({
             id: entry.id,
             description: entry.description,
             amount: Number(entry.amount),
