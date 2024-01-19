@@ -1,18 +1,18 @@
-import { Request, Response } from 'express';
-import { date, number, object, string } from 'yup';
-import { Expense } from '../../models/expense';
+import { Request, Response } from 'express'
+import { date, number, object, string } from "yup";
+import { Income } from '../../models/income';
 import db from '../../db';
 
 const schema = object({
     categoryId: string().uuid().required(),
-    amount: number().required().min(0, 'expense cannot be less than 0'),
+    amount: number().required().min(0, 'income cannot be less than 0'),
     description: string().required(),
-    date: date().required(),
-});
+    date: date().required()
+})
 
-export default async function (req: Request, res: Response) {
-    try {
-        const dto = await schema.validate(req.body);
+export default async function(req: Request, res: Response) {
+    try{
+        const dto = await schema.validate(req.body)
         const query = await db.query(`
             INSERT INTO entries (
                 category_id,
@@ -21,8 +21,8 @@ export default async function (req: Request, res: Response) {
                 type,
                 date
             )
-            VALUES($1, $2, $3, 'expense', $4)
-            RETURNING
+            VALUES($1, $2, $3, 'income', $4)
+            RETURNING 
                 id,
                 description,
                 amount,
@@ -31,8 +31,8 @@ export default async function (req: Request, res: Response) {
                 (SELECT name FROM categories WHERE id = $1) AS category_name;
         `, [dto.categoryId, dto.description, dto.amount, dto.date.toISOString()]
         );
-
-        const responseData = query.rows.map((entry: Expense) => ({
+        
+        const responseData = query.rows.map((entry: Income) => ({
             id: entry.id,
             description: entry.description,
             amount: Number(entry.amount),
@@ -44,7 +44,7 @@ export default async function (req: Request, res: Response) {
         }));
 
         res.status(201).json(responseData);
-    } catch (error) {
+    } catch(error){
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }

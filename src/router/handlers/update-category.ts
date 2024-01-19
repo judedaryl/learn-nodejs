@@ -11,13 +11,17 @@ const pathSchema = object({
 })
 
 export default async function (req: Request, res: Response) {
-    const { id } = await pathSchema.validate(req.params)
-    const { name } = await schema.validate(req.body)
-    await db.query(`
-        UPDATE categories
-            SET name = $2
-        WHERE
-            id = $1;
-    `, [id, name])
-    res.status(204).send();
+    try {
+        const { id } = await pathSchema.validate(req.params)
+        const { name } = await schema.validate(req.body)
+        await db.query(`
+            UPDATE categories
+                SET name = $2
+            WHERE
+                id = $1;
+        `, [id, name])
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 }

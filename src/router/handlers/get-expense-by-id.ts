@@ -1,8 +1,15 @@
-import { Request, Response } from 'express';
+import { Request, Response } from 'express'
 import db from '../../db';
 import { Expense } from '../../models/expense';
+import { object, string } from 'yup';
 
-export default async function(_: Request, res: Response) {
+const pathSchema = object({
+    id: string().uuid()
+})
+
+export default async function(req: Request, res: Response) {
+    const { id } = await pathSchema.validate(req.params)
+    
     try {
         const query = await db.query<Expense>(`
         SELECT e.id, 
@@ -10,10 +17,11 @@ export default async function(_: Request, res: Response) {
             e.amount,
             e.date, 
             c.id category_id, 
-            c.name category_name 
+            c.name category_name
         FROM entries e 
         LEFT JOIN categories c ON c.id = e.category_id 
-        WHERE e.type = $1`, ['expense']);
+        WHERE e.id = $1
+        AND e.type = $2`, [ id,'expense' ]);
 
         const responseData = query.rows.map((entry: Expense) => ({
             id: entry.id,
